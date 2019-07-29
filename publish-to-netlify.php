@@ -14,18 +14,17 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Publish to Netlify
- * Plugin URI:        https://rgllm.com/publish-to-netlify
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Plugin URI:        https://github.com/rgllm/publish-to-netlify
+ * Description:       Connect your WordPress website to Netlify by triggering build hooks on save and or update.
  * Version:           1.0.0
  * Author:            Rogério Moreira
  * Author URI:        https://rgllm.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       publish-to-netlify
- * Domain Path:       /languages
  */
 
-defined('ABSPATH') or die('You do not have access to this file, sorry mate');
+defined('ABSPATH') or die('You do not have access to this file.');
 
 class publishToNetlifyHook
 {
@@ -35,6 +34,7 @@ class publishToNetlifyHook
         add_action('admin_init', array($this, 'setup_sections'));
         add_action('admin_init', array($this, 'setup_fields'));
         add_action( 'publish_post', array($this, 'wordpress_netlify_enqueue'), 10, 2 );
+        add_action( 'admin_bar_menu', array($this, 'add_build_status_to_toolbar'), 210 );
     }
 
     public function add_settings_page() { ?>
@@ -54,8 +54,8 @@ class publishToNetlifyHook
             </form>
             <footer>
                 <h3>Plugin documentation</h3>
-                <p><a href="https://github.com/rgllm">Documentation</a></p>
-                <p><a href="https://github.com/rgllm">Github</a></p>
+                <p><a href="https://github.com/rgllm/publish-to-netlify">Documentation</a></p>
+                <p><a href="https://github.com/rgllm/publish-to-netlify">Github</a></p>
             </footer>
 
         </div><?php
@@ -77,9 +77,7 @@ class publishToNetlifyHook
         $capability = 'manage_options';
         $slug = 'publish_to_netlify_fields';
         $callback = array($this, 'add_settings_page');
-        $icon = 'dashicons-cloud';
-        $position = 100;
-        add_menu_page($page_title, $menu_title, $capability, $slug, $callback, $icon, $position);
+        add_options_page($page_title, $menu_title, $capability, $slug, $callback);
     }
 
     public function admin_notice() {
