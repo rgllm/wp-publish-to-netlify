@@ -9,7 +9,7 @@
  * that starts the plugin.
  *
  * @link              https://rgllm.com
- * @since             1.0.0
+ * @since             1.0.1
  * @package           Publish_To_Netlify
  *
  * @wordpress-plugin
