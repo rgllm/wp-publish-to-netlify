@@ -34,7 +34,6 @@ class publishToNetlifyHook
         add_action('admin_init', array($this, 'setup_sections'));
         add_action('admin_init', array($this, 'setup_fields'));
         add_action( 'publish_post', array($this, 'wordpress_netlify_enqueue'), 10, 2 );
-        add_action( 'admin_bar_menu', array($this, 'add_build_status_to_toolbar'), 210 );
     }
 
     public function add_settings_page() { ?>
