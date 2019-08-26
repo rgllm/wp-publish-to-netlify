@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://rgllm.com
- * @since             1.0.1
+ * @since             1.0.0
  * @package           Publish_To_Netlify
  *
  * @wordpress-plugin
  * Plugin Name:       Publish to Netlify
  * Plugin URI:        https://github.com/rgllm/publish-to-netlify
  * Description:       Connect your WordPress website to Netlify by triggering build hooks on save and or update.
- * Version:           1.0.0
+ * Version:           1.0.2
  * Author:            Rogério Moreira
  * Author URI:        https://rgllm.com
  * License:           GPL-2.0+
@@ -33,17 +33,15 @@ class publishToNetlifyHook
         add_action('admin_menu', array($this, 'create_plugin_settings_page'));
         add_action('admin_init', array($this, 'setup_sections'));
         add_action('admin_init', array($this, 'setup_fields'));
-        add_action( 'publish_post', array($this, 'wordpress_netlify_enqueue'), 10, 2 );
+        add_action( 'save_post', array($this, 'wordpress_netlify_enqueue'), 10, 2 );
+        add_action( 'save_page', array($this, 'wordpress_netlify_enqueue'), 10, 2 );
+        add_action('acf_save_post', array($this, 'wordpress_netlify_enqueue'), 20);
     }
 
     public function add_settings_page() { ?>
         <div class="wrap">
-            <h1>Publish to Netlify settings</h1>
+            <h1>Publish to Netlify</h1>
             <hr>
-            <?php
-            if (isset($_GET['settings-updated']) && $_GET['settings-updated']) {
-                $this->admin_notice();
-            } ?>
             <form method="POST" action="options.php">
                 <?php
                 settings_fields('publish_to_netlify_fields');
@@ -52,9 +50,9 @@ class publishToNetlifyHook
                 ?>
             </form>
             <footer>
-                <h3>Plugin documentation</h3>
-                <p><a href="https://github.com/rgllm/publish-to-netlify">Documentation</a></p>
-                <p><a href="https://github.com/rgllm/publish-to-netlify">Github</a></p>
+                <h3>Documentation</h3>
+                <p><a href="https://pt.wordpress.org/plugins/publish-to-netlify/">WordPress Support Forum</a></p>
+                <p><a href="https://github.com/rgllm/wp-publish-to-netlify/">Github repository</a></p>
             </footer>
 
         </div><?php
@@ -65,9 +63,11 @@ class publishToNetlifyHook
         $webhook_url = get_option('webhook_address');
 
         if ( ($status === 'publish') && (!empty( $webhook_url ) )) {
+            var_dump('publish');
+            var_dump('hello');
+            die();
            wp_remote_post( $webhook_url );
         }
-        ?><?php
     }
 
     public function create_plugin_settings_page() {
@@ -79,21 +79,13 @@ class publishToNetlifyHook
         add_options_page($page_title, $menu_title, $capability, $slug, $callback);
     }
 
-    public function admin_notice() {
-        ?>
-            <div class="notice notice-success is-dismissible">
-                <p>Your settings have been updated!</p>
-            </div><?php
-    }
-
     public function setup_sections() {
-        add_settings_section('netlify_settings_section', 'Netlify settings', array($this, 'section_callback'), 'publish_to_netlify_fields');
+        add_settings_section('netlify_settings_section', 'Settings', array($this, 'section_callback'), 'publish_to_netlify_fields');
     }
 
     public function section_callback($arguments){
         switch ($arguments['id']) {
             case 'netlify_settings_section':
-                echo 'Netlify webhooks settings';
                 break;
         }
     }
@@ -103,36 +95,12 @@ class publishToNetlifyHook
                 $fields = array(
                     array(
                         'uid' => 'webhook_address',
-                        'label' => 'Webhook Build URL',
+                        'label' => 'Netlify Build Hook URL',
                         'section' => 'netlify_settings_section',
                         'type' => 'text',
                         'placeholder' => 'build-url.netlify.com',
                         'default' => '',
                     ),
-                    array(
-                        'uid' => 'netlify_site_id',
-                        'label' => 'Netlify site_id',
-                        'section' => 'netlify_settings_section',
-                        'type' => 'text',
-                        'placeholder' => 'e.g. 5b8e927e-82e1-4786-4770-a9a8321yes43',
-                        'default' => '',
-                    ),
-                    array(
-                        'uid' => 'netlify_api_key',
-                        'label' => 'Netlify API Key',
-                        'section' => 'netlify_settings_section',
-                        'type' => 'text',
-                        'placeholder' => 'o-auth token',
-                        'default' => '',
-                    ),
-                    array(
-                        'uid' => 'netlify_user_agent',
-                        'label' => 'User-Agent',
-                        'section' => 'netlify_settings_section',
-                        'type' => 'text',
-                        'placeholder' => 'e.g. and-website-url.netlify.com',
-                        'default' => '',
-                    )
                 );
                 foreach ($fields as $field) {
                     add_settings_field($field['uid'], $field['label'], array($this, 'field_callback'), 'publish_to_netlify_fields', $field['section'], $field);
