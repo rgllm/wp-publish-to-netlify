@@ -19,7 +19,7 @@
  * Version:           1.0.2
  * Author:            Rogério Moreira
  * Author URI:        https://rgllm.com
- * License:           GPL-2.0+
+ * License:           GPL
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       publish-to-netlify
  */
@@ -63,9 +63,6 @@ class publishToNetlifyHook
         $webhook_url = get_option('webhook_address');
 
         if ( ($status === 'publish') && (!empty( $webhook_url ) )) {
-            var_dump('publish');
-            var_dump('hello');
-            die();
            wp_remote_post( $webhook_url );
         }
     }
