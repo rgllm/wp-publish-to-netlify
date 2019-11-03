@@ -17,3 +17,6 @@ jobs:
         echo test, and deploy your project.
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@1.2.1
+      env:
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
