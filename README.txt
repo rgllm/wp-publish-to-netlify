@@ -2,7 +2,7 @@
 Contributors: rogeriomoreira
 Tags: netlify, headless, deploy
 Requires at least: 4.6 or higher
-Tested up to: 5.3.2
+Tested up to: 5.6
 Requires PHP: 7.0
 Stable tag: trunk
 License: GPL2
